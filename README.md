@@ -21,18 +21,12 @@ Follow the next steps to setup the repository:
 
 ```
 # Mnemonic, only first address will be used
-MNEMONIC=""
+MNEMONIC=
 
-# Add Alchemy or Infura provider keys, alchemy takes preference at the config level
-ALCHEMY_KEY=""
-INFURA_KEY=""
-
+# Add Infura provider keys, alchemy takes preference at the config level
+INFURA_KEY=
 
 # Optional Etherscan key, for automatize the verification of the contracts at Etherscan
-ETHERSCAN_KEY=""
-
-# Optional, if you plan to use Tenderly scripts
-TENDERLY_PROJECT=""
-TENDERLY_USERNAME=""
+ETHERSCAN_KEY=
 
 ```

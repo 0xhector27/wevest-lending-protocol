@@ -17,7 +17,6 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider,
     //events
     event LendingPoolUpdated(address indexed newAddress);
     event LendingPoolCoreUpdated(address indexed newAddress);
-    event LendingPoolParametersProviderUpdated(address indexed newAddress);
     event LendingPoolManagerUpdated(address indexed newAddress);
     event LendingPoolConfiguratorUpdated(address indexed newAddress);
     event LendingPoolLiquidationManagerUpdated(address indexed newAddress);
@@ -113,23 +112,6 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider,
     function setLendingPoolDataProviderImpl(address _provider) public override onlyOwner {
         updateImplInternal(DATA_PROVIDER, _provider);
         emit LendingPoolDataProviderUpdated(_provider);
-    }
-
-    /**
-    * @dev returns the address of the LendingPoolParametersProvider proxy
-    * @return the address of the Lending pool parameters provider proxy
-    **/
-    function getLendingPoolParametersProvider() public view override returns (address) {
-        return getAddress(LENDING_POOL_PARAMETERS_PROVIDER);
-    }
-
-    /**
-    * @dev updates the implementation of the lending pool parameters provider
-    * @param _parametersProvider the new lending pool parameters provider implementation
-    **/
-    function setLendingPoolParametersProviderImpl(address _parametersProvider) public override onlyOwner {
-        updateImplInternal(LENDING_POOL_PARAMETERS_PROVIDER, _parametersProvider);
-        emit LendingPoolParametersProviderUpdated(_parametersProvider);
     }
 
     /**

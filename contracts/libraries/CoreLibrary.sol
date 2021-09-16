@@ -183,12 +183,6 @@ library CoreLibrary {
     }
 
     /**
-    * @dev calculates the compounded borrow balance of a user
-    * @param _self the userReserve object
-    * @return the user compounded borrow balance
-    **/
-
-    /**
     * @dev increases the total borrows
     * @param _reserve the reserve object
     * @param _amount the amount to add to the total borrows

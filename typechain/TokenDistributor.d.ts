@@ -23,16 +23,11 @@ interface TokenDistributorInterface extends ethers.utils.Interface {
   functions: {
     "DISTRIBUTION_BASE()": FunctionFragment;
     "IMPLEMENTATION_REVISION()": FunctionFragment;
-    "KYBER_ETH_MOCK_ADDRESS()": FunctionFragment;
-    "MAX_UINT()": FunctionFragment;
-    "MAX_UINT_MINUS_ONE()": FunctionFragment;
-    "MIN_CONVERSION_RATE()": FunctionFragment;
     "distribute(address[])": FunctionFragment;
     "distributeWithAmounts(address[],uint256[])": FunctionFragment;
     "distributeWithPercentages(address[],uint256[])": FunctionFragment;
     "getDistribution()": FunctionFragment;
     "initialize(address[],uint256[])": FunctionFragment;
-    "recipientBurn()": FunctionFragment;
     "tokenToBurn()": FunctionFragment;
   };
 
@@ -42,19 +37,6 @@ interface TokenDistributorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "IMPLEMENTATION_REVISION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "KYBER_ETH_MOCK_ADDRESS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "MAX_UINT", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "MAX_UINT_MINUS_ONE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MIN_CONVERSION_RATE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -78,10 +60,6 @@ interface TokenDistributorInterface extends ethers.utils.Interface {
     values: [string[], BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "recipientBurn",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "tokenToBurn",
     values?: undefined
   ): string;
@@ -92,19 +70,6 @@ interface TokenDistributorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "IMPLEMENTATION_REVISION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "KYBER_ETH_MOCK_ADDRESS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "MAX_UINT", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "MAX_UINT_MINUS_ONE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MIN_CONVERSION_RATE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "distribute", data: BytesLike): Result;
@@ -121,10 +86,6 @@ interface TokenDistributorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "recipientBurn",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "tokenToBurn",
     data: BytesLike
@@ -199,14 +160,6 @@ export class TokenDistributor extends BaseContract {
 
     IMPLEMENTATION_REVISION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    KYBER_ETH_MOCK_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
-
-    MAX_UINT(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    MAX_UINT_MINUS_ONE(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    MIN_CONVERSION_RATE(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     distribute(
       _tokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -239,22 +192,12 @@ export class TokenDistributor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    recipientBurn(overrides?: CallOverrides): Promise<[string]>;
-
     tokenToBurn(overrides?: CallOverrides): Promise<[string]>;
   };
 
   DISTRIBUTION_BASE(overrides?: CallOverrides): Promise<BigNumber>;
 
   IMPLEMENTATION_REVISION(overrides?: CallOverrides): Promise<BigNumber>;
-
-  KYBER_ETH_MOCK_ADDRESS(overrides?: CallOverrides): Promise<string>;
-
-  MAX_UINT(overrides?: CallOverrides): Promise<BigNumber>;
-
-  MAX_UINT_MINUS_ONE(overrides?: CallOverrides): Promise<BigNumber>;
-
-  MIN_CONVERSION_RATE(overrides?: CallOverrides): Promise<BigNumber>;
 
   distribute(
     _tokens: string[],
@@ -285,22 +228,12 @@ export class TokenDistributor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  recipientBurn(overrides?: CallOverrides): Promise<string>;
-
   tokenToBurn(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     DISTRIBUTION_BASE(overrides?: CallOverrides): Promise<BigNumber>;
 
     IMPLEMENTATION_REVISION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    KYBER_ETH_MOCK_ADDRESS(overrides?: CallOverrides): Promise<string>;
-
-    MAX_UINT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MAX_UINT_MINUS_ONE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MIN_CONVERSION_RATE(overrides?: CallOverrides): Promise<BigNumber>;
 
     distribute(_tokens: string[], overrides?: CallOverrides): Promise<void>;
 
@@ -330,8 +263,6 @@ export class TokenDistributor extends BaseContract {
       _percentages: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    recipientBurn(overrides?: CallOverrides): Promise<string>;
 
     tokenToBurn(overrides?: CallOverrides): Promise<string>;
   };
@@ -377,14 +308,6 @@ export class TokenDistributor extends BaseContract {
 
     IMPLEMENTATION_REVISION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    KYBER_ETH_MOCK_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MAX_UINT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MAX_UINT_MINUS_ONE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MIN_CONVERSION_RATE(overrides?: CallOverrides): Promise<BigNumber>;
-
     distribute(
       _tokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -410,8 +333,6 @@ export class TokenDistributor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    recipientBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
     tokenToBurn(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -419,20 +340,6 @@ export class TokenDistributor extends BaseContract {
     DISTRIBUTION_BASE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     IMPLEMENTATION_REVISION(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    KYBER_ETH_MOCK_ADDRESS(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MAX_UINT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    MAX_UINT_MINUS_ONE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MIN_CONVERSION_RATE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -460,8 +367,6 @@ export class TokenDistributor extends BaseContract {
       _percentages: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    recipientBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenToBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

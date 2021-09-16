@@ -29,7 +29,6 @@ interface ILendingPoolAddressesProviderInterface
     "getLendingPoolDataProvider()": FunctionFragment;
     "getLendingPoolLiquidationManager()": FunctionFragment;
     "getLendingPoolManager()": FunctionFragment;
-    "getLendingPoolParametersProvider()": FunctionFragment;
     "getLendingRateOracle()": FunctionFragment;
     "getPriceOracle()": FunctionFragment;
     "getTokenDistributor()": FunctionFragment;
@@ -40,7 +39,6 @@ interface ILendingPoolAddressesProviderInterface
     "setLendingPoolImpl(address)": FunctionFragment;
     "setLendingPoolLiquidationManager(address)": FunctionFragment;
     "setLendingPoolManager(address)": FunctionFragment;
-    "setLendingPoolParametersProviderImpl(address)": FunctionFragment;
     "setLendingRateOracle(address)": FunctionFragment;
     "setPriceOracle(address)": FunctionFragment;
     "setTokenDistributor(address)": FunctionFragment;
@@ -72,10 +70,6 @@ interface ILendingPoolAddressesProviderInterface
   ): string;
   encodeFunctionData(
     functionFragment: "getLendingPoolManager",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLendingPoolParametersProvider",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -116,10 +110,6 @@ interface ILendingPoolAddressesProviderInterface
   ): string;
   encodeFunctionData(
     functionFragment: "setLendingPoolManager",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLendingPoolParametersProviderImpl",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -164,10 +154,6 @@ interface ILendingPoolAddressesProviderInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getLendingPoolParametersProvider",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getLendingRateOracle",
     data: BytesLike
   ): Result;
@@ -205,10 +191,6 @@ interface ILendingPoolAddressesProviderInterface
   ): Result;
   decodeFunctionResult(
     functionFragment: "setLendingPoolManager",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLendingPoolParametersProviderImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -287,10 +269,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
 
     getLendingPoolManager(overrides?: CallOverrides): Promise<[string]>;
 
-    getLendingPoolParametersProvider(
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     getLendingRateOracle(overrides?: CallOverrides): Promise<[string]>;
 
     getPriceOracle(overrides?: CallOverrides): Promise<[string]>;
@@ -332,11 +310,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setLendingPoolParametersProviderImpl(
-      _parametersProvider: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setLendingRateOracle(
       _lendingRateOracle: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -366,8 +339,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
   getLendingPoolLiquidationManager(overrides?: CallOverrides): Promise<string>;
 
   getLendingPoolManager(overrides?: CallOverrides): Promise<string>;
-
-  getLendingPoolParametersProvider(overrides?: CallOverrides): Promise<string>;
 
   getLendingRateOracle(overrides?: CallOverrides): Promise<string>;
 
@@ -410,11 +381,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setLendingPoolParametersProviderImpl(
-    _parametersProvider: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setLendingRateOracle(
     _lendingRateOracle: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -446,10 +412,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
     ): Promise<string>;
 
     getLendingPoolManager(overrides?: CallOverrides): Promise<string>;
-
-    getLendingPoolParametersProvider(
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     getLendingRateOracle(overrides?: CallOverrides): Promise<string>;
 
@@ -489,11 +451,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setLendingPoolParametersProviderImpl(
-      _parametersProvider: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setLendingRateOracle(
       _lendingRateOracle: string,
       overrides?: CallOverrides
@@ -528,10 +485,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
     ): Promise<BigNumber>;
 
     getLendingPoolManager(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLendingPoolParametersProvider(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getLendingRateOracle(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -574,11 +527,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setLendingPoolParametersProviderImpl(
-      _parametersProvider: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setLendingRateOracle(
       _lendingRateOracle: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -617,10 +565,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getLendingPoolManager(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getLendingPoolParametersProvider(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -666,11 +610,6 @@ export class ILendingPoolAddressesProvider extends BaseContract {
 
     setLendingPoolManager(
       _lendingPoolManager: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLendingPoolParametersProviderImpl(
-      _parametersProvider: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

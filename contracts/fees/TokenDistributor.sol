@@ -15,7 +15,7 @@ import "../libraries/EthAddressLib.sol";
 ///  - The Kyber Proxy is approved for a list of tokens in construction, which will be later burnt
 ///  - At any moment, anyone can call distribute() with a list of token addresses in order to distribute
 ///    the accumulated token amounts and/or ETH in this contract to all the receivers with percentages
-///  - If the address(0) is used as receiver, this contract will trade in Kyber to tokenToBurn (LEND)
+///  - If the address(0) is used as receiver, this contract will trade in Kyber to tokenToBurn (WEVEST)
 ///    and burn it (sending to address(0) the tokenToBurn)
 
 contract TokenDistributor is ReentrancyGuard, VersionedInitializable {
@@ -32,35 +32,14 @@ contract TokenDistributor is ReentrancyGuard, VersionedInitializable {
 
     uint256 public constant IMPLEMENTATION_REVISION = 0x4;
 
-    /// @notice DEPRECATED
-    uint256 public constant MAX_UINT = 2**256 - 1;
-
-    /// @notice DEPRECATED
-    uint256 public constant MAX_UINT_MINUS_ONE = (2**256 - 1) - 1;
-
-    /// @notice DEPRECATED
-    uint256 public constant MIN_CONVERSION_RATE = 1;
-
-    /// @notice DEPRECATED
-    address public constant KYBER_ETH_MOCK_ADDRESS = address(0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee);
-
     /// @dev Defines how tokens and ETH are distributed on each call to .distribute()
     Distribution private distribution;
 
     /// @notice Instead of using 100 for percentages, higher base to have more precision in the distribution
     uint256 public constant DISTRIBUTION_BASE = 10000;
 
-    /// @notice DEPRECATED
-    // IKyberNetworkProxyInterface public kyberProxy;
-
     /// @notice The address of the token to burn (LEND token)
     address public tokenToBurn;
-
-    /// @notice DEPRECATED
-    address public recipientBurn;
-
-    /// @notice DEPRECATED
-    // IExchangeAdapter public exchangeAdapter;
 
     /// @notice Called by the proxy when setting this contract as implementation
     function initialize(
@@ -69,7 +48,6 @@ contract TokenDistributor is ReentrancyGuard, VersionedInitializable {
     ) public initializer {
         internalSetTokenDistribution(_receivers, _percentages);
         emit DistributionUpdated(_receivers, _percentages);    
-        
     }
 
     /// @notice In order to receive ETH transfers
@@ -112,7 +90,6 @@ contract TokenDistributor is ReentrancyGuard, VersionedInitializable {
             if (_amountToDistribute <= 0) {
                 continue;
             }
-
             internalDistributeTokenWithAmount(_tokens[i], _amountToDistribute);
         }
     }
@@ -150,7 +127,6 @@ contract TokenDistributor is ReentrancyGuard, VersionedInitializable {
                 require(_success, "Reverted ETH transfer");
             }
             emit Distributed(_distribution.receivers[j], _distribution.percentages[j], _amount);
-            
         }
     }
 
@@ -166,5 +142,4 @@ contract TokenDistributor is ReentrancyGuard, VersionedInitializable {
     function getRevision() internal pure override returns (uint256) {
         return IMPLEMENTATION_REVISION;
     }
-
 }

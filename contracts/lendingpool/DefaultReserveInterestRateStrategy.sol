@@ -5,7 +5,6 @@ import "../interfaces/IReserveInterestRateStrategy.sol";
 import "../libraries/WadRayMath.sol";
 import "../configuration/LendingPoolAddressesProvider.sol";
 import "./LendingPoolCore.sol";
-import "../interfaces/ILendingRateOracle.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 

@@ -24,7 +24,7 @@ interface FeeProviderInterface extends ethers.utils.Interface {
     "FEE_PROVIDER_REVISION()": FunctionFragment;
     "calculateLoanOriginationFee(address,uint256)": FunctionFragment;
     "getLoanOriginationFeePercentage()": FunctionFragment;
-    "initialize(address)": FunctionFragment;
+    "initialize()": FunctionFragment;
     "originationFeePercentage()": FunctionFragment;
   };
 
@@ -40,7 +40,10 @@ interface FeeProviderInterface extends ethers.utils.Interface {
     functionFragment: "getLoanOriginationFeePercentage",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "originationFeePercentage",
     values?: undefined
@@ -124,7 +127,6 @@ export class FeeProvider extends BaseContract {
     ): Promise<[BigNumber]>;
 
     initialize(
-      _addressesProvider: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -144,7 +146,6 @@ export class FeeProvider extends BaseContract {
   ): Promise<BigNumber>;
 
   initialize(
-    _addressesProvider: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -163,10 +164,7 @@ export class FeeProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      _addressesProvider: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initialize(overrides?: CallOverrides): Promise<void>;
 
     originationFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -187,7 +185,6 @@ export class FeeProvider extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _addressesProvider: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -210,7 +207,6 @@ export class FeeProvider extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _addressesProvider: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -37,14 +37,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LendingPoolAddressesProvider__factory>;
     getContractFactory(
-      name: "LendingPoolParametersProvider",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.LendingPoolParametersProvider__factory>;
-    getContractFactory(
-      name: "UintStorage",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UintStorage__factory>;
-    getContractFactory(
       name: "FeeProvider",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeProvider__factory>;
@@ -57,21 +49,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IChainlinkAggregator__factory>;
     getContractFactory(
+      name: "IERC20Detailed",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Detailed__factory>;
+    getContractFactory(
       name: "IFeeProvider",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IFeeProvider__factory>;
     getContractFactory(
-      name: "IKyberNetworkProxyInterface",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IKyberNetworkProxyInterface__factory>;
-    getContractFactory(
       name: "ILendingPoolAddressesProvider",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ILendingPoolAddressesProvider__factory>;
-    getContractFactory(
-      name: "ILendingRateOracle",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ILendingRateOracle__factory>;
     getContractFactory(
       name: "IPriceOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -289,6 +277,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TestToken__factory>;
     getContractFactory(
+      name: "IncentivizedERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IncentivizedERC20__factory>;
+    getContractFactory(
       name: "WvToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WvToken__factory>;
@@ -324,16 +316,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LendingPoolAddressesProvider>;
     getContractAt(
-      name: "LendingPoolParametersProvider",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.LendingPoolParametersProvider>;
-    getContractAt(
-      name: "UintStorage",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UintStorage>;
-    getContractAt(
       name: "FeeProvider",
       address: string,
       signer?: ethers.Signer
@@ -349,25 +331,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IChainlinkAggregator>;
     getContractAt(
+      name: "IERC20Detailed",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Detailed>;
+    getContractAt(
       name: "IFeeProvider",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IFeeProvider>;
     getContractAt(
-      name: "IKyberNetworkProxyInterface",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IKyberNetworkProxyInterface>;
-    getContractAt(
       name: "ILendingPoolAddressesProvider",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ILendingPoolAddressesProvider>;
-    getContractAt(
-      name: "ILendingRateOracle",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ILendingRateOracle>;
     getContractAt(
       name: "IPriceOracle",
       address: string,
@@ -638,6 +615,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TestToken>;
+    getContractAt(
+      name: "IncentivizedERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IncentivizedERC20>;
     getContractAt(
       name: "WvToken",
       address: string,

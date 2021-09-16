@@ -21,23 +21,13 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface LendingRateOracleInterface extends ethers.utils.Interface {
   functions: {
-    "getMarketBorrowRate(address)": FunctionFragment;
     "getMarketLiquidityRate(address)": FunctionFragment;
-    "setMarketBorrowRate(address,uint256)": FunctionFragment;
     "setMarketLiquidityRate(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "getMarketBorrowRate",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getMarketLiquidityRate",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMarketBorrowRate",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMarketLiquidityRate",
@@ -45,15 +35,7 @@ interface LendingRateOracleInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getMarketBorrowRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getMarketLiquidityRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMarketBorrowRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -108,21 +90,10 @@ export class LendingRateOracle extends BaseContract {
   interface: LendingRateOracleInterface;
 
   functions: {
-    getMarketBorrowRate(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getMarketLiquidityRate(
       _asset: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    setMarketBorrowRate(
-      _asset: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     setMarketLiquidityRate(
       _asset: string,
@@ -131,21 +102,10 @@ export class LendingRateOracle extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  getMarketBorrowRate(
-    _asset: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getMarketLiquidityRate(
     _asset: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  setMarketBorrowRate(
-    _asset: string,
-    _rate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   setMarketLiquidityRate(
     _asset: string,
@@ -154,21 +114,10 @@ export class LendingRateOracle extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getMarketBorrowRate(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getMarketLiquidityRate(
       _asset: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    setMarketBorrowRate(
-      _asset: string,
-      _rate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setMarketLiquidityRate(
       _asset: string,
@@ -180,20 +129,9 @@ export class LendingRateOracle extends BaseContract {
   filters: {};
 
   estimateGas: {
-    getMarketBorrowRate(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getMarketLiquidityRate(
       _asset: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setMarketBorrowRate(
-      _asset: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setMarketLiquidityRate(
@@ -204,20 +142,9 @@ export class LendingRateOracle extends BaseContract {
   };
 
   populateTransaction: {
-    getMarketBorrowRate(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getMarketLiquidityRate(
       _asset: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setMarketBorrowRate(
-      _asset: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setMarketLiquidityRate(

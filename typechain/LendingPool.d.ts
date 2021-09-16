@@ -36,7 +36,6 @@ interface LendingPoolInterface extends ethers.utils.Interface {
     "getUserReserveData(address,address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "liquidationCall(address,address,address,uint256,bool)": FunctionFragment;
-    "parametersProvider()": FunctionFragment;
     "repay(address,uint256,address)": FunctionFragment;
     "setUserUseReserveAsCollateral(address,bool)": FunctionFragment;
     "withdraw(address,address,uint256)": FunctionFragment;
@@ -93,10 +92,6 @@ interface LendingPoolInterface extends ethers.utils.Interface {
     values: [string, string, string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "parametersProvider",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "repay",
     values: [string, BigNumberish, string]
   ): string;
@@ -151,10 +146,6 @@ interface LendingPoolInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "liquidationCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "parametersProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "repay", data: BytesLike): Result;
@@ -435,8 +426,6 @@ export class LendingPool extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    parametersProvider(overrides?: CallOverrides): Promise<[string]>;
-
     repay(
       _reserve: string,
       _amount: BigNumberish,
@@ -577,8 +566,6 @@ export class LendingPool extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  parametersProvider(overrides?: CallOverrides): Promise<string>;
-
   repay(
     _reserve: string,
     _amount: BigNumberish,
@@ -718,8 +705,6 @@ export class LendingPool extends BaseContract {
       _receiveWvToken: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    parametersProvider(overrides?: CallOverrides): Promise<string>;
 
     repay(
       _reserve: string,
@@ -1069,8 +1054,6 @@ export class LendingPool extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    parametersProvider(overrides?: CallOverrides): Promise<BigNumber>;
-
     repay(
       _reserve: string,
       _amount: BigNumberish,
@@ -1153,10 +1136,6 @@ export class LendingPool extends BaseContract {
       _purchaseAmount: BigNumberish,
       _receiveWvToken: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    parametersProvider(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     repay(

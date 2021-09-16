@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "../libraries/openzeppelin-upgradeability/VersionedInitializable.sol";
 
 import "../configuration/LendingPoolAddressesProvider.sol";
-import "../configuration/LendingPoolParametersProvider.sol";
 import "../tokenization/WvToken.sol";
 import "../libraries/CoreLibrary.sol";
 import "../libraries/WadRayMath.sol";
@@ -30,7 +29,6 @@ contract LendingPoolLiquidationManager is ReentrancyGuard, VersionedInitializabl
     LendingPoolAddressesProvider public addressesProvider;
     LendingPoolCore core;
     LendingPoolDataProvider dataProvider;
-    LendingPoolParametersProvider parametersProvider;
     IFeeProvider feeProvider;
     address ethereumAddress;
 

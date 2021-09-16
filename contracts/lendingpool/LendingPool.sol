@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../libraries/openzeppelin-upgradeability/VersionedInitializable.sol";
 import "../configuration/LendingPoolAddressesProvider.sol";
-import "../configuration/LendingPoolParametersProvider.sol";
 import "../tokenization/WvToken.sol";
 import "../libraries/CoreLibrary.sol";
 import "../libraries/WadRayMath.sol";
@@ -31,7 +30,6 @@ contract LendingPool is ReentrancyGuard, VersionedInitializable {
     LendingPoolAddressesProvider public addressesProvider;
     LendingPoolCore public core;
     LendingPoolDataProvider public dataProvider;
-    LendingPoolParametersProvider public parametersProvider;
     IFeeProvider feeProvider;
 
     /**
@@ -221,9 +219,6 @@ contract LendingPool is ReentrancyGuard, VersionedInitializable {
         addressesProvider = _addressesProvider;
         core = LendingPoolCore(addressesProvider.getLendingPoolCore());
         dataProvider = LendingPoolDataProvider(addressesProvider.getLendingPoolDataProvider());
-        parametersProvider = LendingPoolParametersProvider(
-            addressesProvider.getLendingPoolParametersProvider()
-        );
         feeProvider = IFeeProvider(addressesProvider.getFeeProvider());
     }
 
