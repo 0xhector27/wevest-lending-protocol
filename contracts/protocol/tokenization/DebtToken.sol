@@ -177,7 +177,7 @@ contract DebtToken is IDebtToken, DebtTokenBase {
   }
 
   /**
-   * @dev Returns the the total supply and the average stable rate
+   * @dev Returns the the total supply
    **/
   function getTotalSupply() public view override returns (uint256) {
     return super.totalSupply();
@@ -193,7 +193,7 @@ contract DebtToken is IDebtToken, DebtTokenBase {
   }
 
   /**
-   * @dev Returns the address of the underlying asset of this aToken (E.g. WETH for aWETH)
+   * @dev Returns the address of the underlying asset of this aToken (E.g. WETH for wvWETH)
    **/
   function UNDERLYING_ASSET_ADDRESS() public view returns (address) {
     return _underlyingAsset;
