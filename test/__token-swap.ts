@@ -1,5 +1,6 @@
 import chai from 'chai';
-import { TestEnv, makeSuite, unlockAccount } from './helpers/make-suite';
+import { TestEnv, makeSuite } from './helpers/make-suite';
+import { unlockAccount } from './helpers/utils';
 import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 
@@ -23,7 +24,7 @@ makeSuite('Token Swap', (testEnv: TestEnv) => {
         );
     });
 
-    it("swap USDC into AAVE", async () => {
+    /* it("swap USDC into AAVE", async () => {
         const { tokenSwap } =  testEnv;
         const USDC = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
         const AAVE = "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9";
@@ -48,5 +49,5 @@ makeSuite('Token Swap', (testEnv: TestEnv) => {
 
         const balance = await tokenOut.balanceOf(whaleAddress);
         console.log('swapped amount', balance.toString());
-    });
+    }); */
 });

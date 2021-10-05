@@ -54,6 +54,9 @@ contract YieldFarmingPool is VersionedInitializable {
         returns(uint256) 
     {
         uint256 balanceShares = IVault(vault).balanceOf(address(this));
+        if (maxShares == type(uint256).max) {
+            maxShares = balanceShares;
+        }
         require(balanceShares >= maxShares, "Exceeds YF pool shares balance");
         uint256 withdrawAmount = IVault(vault).withdraw(maxShares);
         if (withdrawAmount > 0) {
@@ -96,7 +99,7 @@ contract YieldFarmingPool is VersionedInitializable {
         returns(uint256)
     {
         uint256 lenderBalance = IWvToken(wvToken).balanceOf(user);
-        uint256 poolBalance = IERC20(asset).balanceOf(wvToken);
+        uint256 poolBalance = IWvToken(wvToken).totalSupply();
         return totalEarning(vault, asset) * lenderBalance / poolBalance;
     }
 

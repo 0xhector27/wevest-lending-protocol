@@ -40,20 +40,13 @@ interface IDebtToken is IInitializableDebtToken {
 
   /**
    * @dev Mints debt token to the user address.
-   * - The resulting rate is the weighted average between the rate of the new debt
-   * and the rate of the previous debt
    * @param user The address receiving the debt tokens
    * @param amount The amount of debt tokens to mint
    **/
-  function mint(
-    address user,
-    uint256 amount
-  ) external returns (bool);
+  function mint(address user, uint256 amount) external returns (bool);
 
   /**
    * @dev Burns debt of `user`
-   * - The resulting rate is the weighted average between the rate of the new debt
-   * and the rate of the previous debt
    * @param user The address of the user getting his debt burned
    * @param amount The amount of debt tokens getting burned
    **/

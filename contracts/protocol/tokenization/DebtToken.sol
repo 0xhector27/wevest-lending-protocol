@@ -221,7 +221,7 @@ contract DebtToken is IDebtToken, DebtTokenBase {
   }
 
   /**
-   * @dev Mints stable debt tokens to an user
+   * @dev Mints debt tokens to an user
    * @param account The account receiving the debt tokens
    * @param amount The amount being minted
    * @param oldTotalSupply the total supply before the minting event
@@ -247,6 +247,6 @@ contract DebtToken is IDebtToken, DebtTokenBase {
     uint256 oldTotalSupply
   ) internal {
     uint256 oldAccountBalance = _balances[account];
-    _balances[account] = oldAccountBalance.sub(amount, Errors.SDT_BURN_EXCEEDS_BALANCE);
+    _balances[account] = oldAccountBalance.sub(amount, Errors.DT_BURN_EXCEEDS_BALANCE);
   }
 }

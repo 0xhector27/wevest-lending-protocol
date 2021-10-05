@@ -2,7 +2,6 @@
 pragma solidity 0.6.12;
 
 import {ILendingPool} from './ILendingPool.sol';
-// import {IWevestIncentivesController} from './IWevestIncentivesController.sol';
 
 /**
  * @title IInitializableDebtToken
@@ -13,21 +12,10 @@ interface IInitializableDebtToken {
    * @dev Emitted when a debt token is initialized
    * @param underlyingAsset The address of the underlying asset
    * @param pool The address of the associated lending pool
-   * // param incentivesController The address of the incentives controller for this aToken
    * @param debtTokenDecimals the decimals of the debt token
    * @param debtTokenName the name of the debt token
    * @param debtTokenSymbol the symbol of the debt token
    **/
-
-  /* event Initialized(
-    address indexed underlyingAsset,
-    address indexed pool,
-    address incentivesController,
-    uint8 debtTokenDecimals,
-    string debtTokenName,
-    string debtTokenSymbol,
-    bytes params
-  ); */
 
   event Initialized(
     address indexed underlyingAsset,
@@ -39,9 +27,8 @@ interface IInitializableDebtToken {
 
   /**
    * @dev Initializes the debt token.
-   * @param pool The address of the lending pool where this aToken will be used
-   * @param underlyingAsset The address of the underlying asset of this aToken (E.g. WETH for aWETH)
-   * // param incentivesController The smart contract managing potential incentives distribution
+   * @param pool The address of the lending pool where this wvToken will be used
+   * @param underlyingAsset The address of the underlying asset of this wvToken (E.g. WETH for wvWETH)
    * @param debtTokenDecimals The decimals of the debtToken, same as the underlying asset's
    * @param debtTokenName The name of the token
    * @param debtTokenSymbol The symbol of the token
@@ -49,7 +36,6 @@ interface IInitializableDebtToken {
   function initialize(
     ILendingPool pool,
     address underlyingAsset,
-    // IWevestIncentivesController incentivesController,
     uint8 debtTokenDecimals,
     string memory debtTokenName,
     string memory debtTokenSymbol

@@ -1,6 +1,8 @@
 import BigNumber from 'bignumber.js';
 export const oneEther = new BigNumber(Math.pow(10, 18));
 
+export const APPROVAL_AMOUNT_LENDING_POOL = '1000000000000000000000000000';
+
 export const MOCK_CHAINLINK_AGGREGATORS_PRICES = {
     // Update to USD-based price feeds
     AAVE: oneEther.multipliedBy('0.003620948469').toFixed(),

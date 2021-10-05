@@ -49,6 +49,20 @@ library ValidationLogic {
     require(!isFrozen, Errors.VL_RESERVE_FROZEN);
   }
 
+  function validateRedeem(
+    DataTypes.ReserveData storage reserve,
+    uint256 amount, 
+    uint256 debtBalance
+  )
+    external
+    view
+  {
+    require(amount != 0, Errors.VL_INVALID_AMOUNT);
+    require(amount <= debtBalance, Errors.VL_NOT_ENOUGH_AVAILABLE_REDEEM_BALANCE);
+
+    (bool isActive, , ) = reserve.configuration.getFlags();
+    require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
+  }
   /**
    * @dev Validates a withdraw action
    * @param reserveAddress The address of the reserve

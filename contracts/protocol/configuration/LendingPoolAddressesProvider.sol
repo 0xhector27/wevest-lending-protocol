@@ -23,7 +23,6 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
   bytes32 private constant EMERGENCY_ADMIN = 'EMERGENCY_ADMIN';
   bytes32 private constant LENDING_POOL_COLLATERAL_MANAGER = 'COLLATERAL_MANAGER';
   bytes32 private constant PRICE_ORACLE = 'PRICE_ORACLE';
-  bytes32 private constant LENDING_RATE_ORACLE = 'LENDING_RATE_ORACLE';
 
   // added by SC
   bytes32 private constant YIELD_FARMING_POOL = 'YIELD_FARMING_POOL';
@@ -198,15 +197,6 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
   function setPriceOracle(address priceOracle) external override onlyOwner {
     _addresses[PRICE_ORACLE] = priceOracle;
     emit PriceOracleUpdated(priceOracle);
-  }
-
-  function getLendingRateOracle() external view override returns (address) {
-    return getAddress(LENDING_RATE_ORACLE);
-  }
-
-  function setLendingRateOracle(address lendingRateOracle) external override onlyOwner {
-    _addresses[LENDING_RATE_ORACLE] = lendingRateOracle;
-    emit LendingRateOracleUpdated(lendingRateOracle);
   }
 
   /**

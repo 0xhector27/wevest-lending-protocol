@@ -61,10 +61,10 @@ interface IWevestIncentivesController {
 
   /**
    * @dev Configure assets for a certain rewards emission
-   * @param assets The assets to incentivize
+   * @param assetsToIncentivize The assets to incentivize
    * @param emissionsPerSecond The emission for each asset
    */
-  function configureAssets(address[] calldata assets, uint256[] calldata emissionsPerSecond)
+  function configureAssets(address[] calldata assetsToIncentivize, uint256[] calldata emissionsPerSecond)
     external;
 
   /**
@@ -84,7 +84,7 @@ interface IWevestIncentivesController {
    * @param user The address of the user
    * @return The rewards
    **/
-  function getRewardsBalance(address[] calldata assets, address user)
+  function getRewardsBalance(address[] calldata assets1, address user)
     external
     view
     returns (uint256);
@@ -96,7 +96,7 @@ interface IWevestIncentivesController {
    * @return Rewards claimed
    **/
   function claimRewards(
-    address[] calldata assets,
+    address[] calldata assetsOfLendingPool,
     uint256 amount,
     address to
   ) external returns (uint256);
@@ -110,7 +110,7 @@ interface IWevestIncentivesController {
    * @return Rewards claimed
    **/
   function claimRewardsOnBehalf(
-    address[] calldata assets,
+    address[] calldata assets2,
     uint256 amount,
     address user,
     address to

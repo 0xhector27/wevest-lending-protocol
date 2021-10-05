@@ -36,15 +36,6 @@ interface ILendingPool {
    * @param user The address of the user initiating the borrow(), receiving the funds on borrow()
    * param amount The amount borrowed out
    **/
-  /* event Borrow(
-    address indexed reserve,
-    address user,
-    address indexed onBehalfOf,
-    uint256 amount,
-    uint256 borrowRateMode,
-    uint256 borrowRate,
-    uint16 indexed referral
-  ); */
 
   event Borrow(
     address indexed reserve,
@@ -55,15 +46,8 @@ interface ILendingPool {
    * @dev Emitted on repay()
    * @param reserve The address of the underlying asset of the reserve
    * @param user The beneficiary of the repayment, getting his debt reduced
-   * // param repayer The address of the user initiating the repay(), providing the funds
    * @param amount The amount repaid
    **/
-  /* event Repay(
-    address indexed reserve,
-    address indexed user,
-    address indexed repayer,
-    uint256 amount
-  ); */
 
   event Repay(
     address indexed reserve,
@@ -169,7 +153,7 @@ interface ILendingPool {
   /**
    * @dev Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
    * already deposited enough collateral, or he was given enough allowance by a credit delegator on the
-   * corresponding debt token (StableDebtToken or VariableDebtToken)
+   * corresponding debt token
    * - E.g. User borrows 100 USDC passing as `onBehalfOf` his own address, receiving the 100 USDC in his wallet
    *   and 100 stable/variable debt tokens, depending on the `interestRateMode`
    * @param assetToBorrow The address of the underlying asset to borrow
@@ -187,7 +171,8 @@ interface ILendingPool {
 
   function redeem(
     address assetBorrowed,
-    address collateralAsset
+    address collateralAsset,
+    uint256 amount
   ) external;
 
   /**

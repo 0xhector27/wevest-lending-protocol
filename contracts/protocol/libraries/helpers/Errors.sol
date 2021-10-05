@@ -8,10 +8,9 @@ pragma solidity 0.6.12;
  * @dev Error messages prefix glossary:
  *  - VL = ValidationLogic
  *  - MATH = Math libraries
- *  - CT = Common errors between tokens (AToken, VariableDebtToken and StableDebtToken)
- *  - AT = AToken
- *  - SDT = StableDebtToken
- *  - VDT = VariableDebtToken
+ *  - CT = Common errors between tokens (WvToken and DebtToken)
+ *  - WVT = WvToken
+ *  - DT = DebtToken
  *  - LP = LendingPool
  *  - LPAPR = LendingPoolAddressesProviderRegistry
  *  - LPC = LendingPoolConfiguration
@@ -32,7 +31,7 @@ library Errors {
   string public constant VL_NOT_ENOUGH_AVAILABLE_USER_BALANCE = '5'; // 'User cannot withdraw more than the available balance'
   string public constant VL_TRANSFER_NOT_ALLOWED = '6'; // 'Transfer cannot be allowed.'
   string public constant VL_BORROWING_NOT_ENABLED = '7'; // 'Borrowing is not enabled'
-  string public constant VL_INVALID_INTEREST_RATE_MODE_SELECTED = '8'; // 'Invalid interest rate mode selected'
+  string public constant VL_NOT_ENOUGH_AVAILABLE_REDEEM_BALANCE = '8'; // 'User cannot redeem more than the available debt balance'
   string public constant VL_COLLATERAL_BALANCE_IS_0 = '9'; // 'The collateral balance is 0'
   string public constant VL_HEALTH_FACTOR_LOWER_THAN_LIQUIDATION_THRESHOLD = '10'; // 'Health factor is lesser than the liquidation threshold'
   string public constant VL_COLLATERAL_CANNOT_COVER_NEW_BORROW = '11'; // 'There is not enough collateral to cover a new borrow'
@@ -97,8 +96,8 @@ library Errors {
   string public constant LP_INCONSISTENT_PARAMS_LENGTH = '74';
   string public constant UL_INVALID_INDEX = '77';
   string public constant LP_NOT_CONTRACT = '78';
-  string public constant SDT_STABLE_DEBT_OVERFLOW = '79';
-  string public constant SDT_BURN_EXCEEDS_BALANCE = '80';
+  string public constant DT_STABLE_DEBT_OVERFLOW = '79';
+  string public constant DT_BURN_EXCEEDS_BALANCE = '80';
 
   enum CollateralManagerErrors {
     NO_ERROR,

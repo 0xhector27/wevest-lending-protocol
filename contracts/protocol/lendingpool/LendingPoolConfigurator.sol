@@ -67,13 +67,13 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     }
   }
 
-  function _initReserve(ILendingPool pool, InitReserveInput calldata input) internal {
+  function _initReserve(ILendingPool _pool, InitReserveInput calldata input) internal {
     address wvTokenProxyAddress =
       _initTokenWithProxy(
         input.wvTokenImpl,
         abi.encodeWithSelector(
           IInitializableWvToken.initialize.selector,
-          pool,
+          _pool,
           input.treasury,
           input.underlyingAsset,
           input.underlyingAssetDecimals,
@@ -87,7 +87,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
         input.debtTokenImpl,
         abi.encodeWithSelector(
           IInitializableDebtToken.initialize.selector,
-          pool,
+          _pool,
           input.underlyingAsset,
           input.underlyingAssetDecimals,
           input.debtTokenName,
@@ -95,7 +95,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
         )
       );
 
-    pool.initReserve(
+    _pool.initReserve(
       input.underlyingAsset,
       wvTokenProxyAddress,
       debtTokenProxyAddress,
@@ -104,14 +104,14 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     );
 
     DataTypes.ReserveConfigurationMap memory currentConfig =
-      pool.getConfiguration(input.underlyingAsset);
+      _pool.getConfiguration(input.underlyingAsset);
 
     currentConfig.setDecimals(input.underlyingAssetDecimals);
 
     currentConfig.setActive(true);
     currentConfig.setFrozen(false);
 
-    pool.setConfiguration(input.underlyingAsset, currentConfig.data);
+    _pool.setConfiguration(input.underlyingAsset, currentConfig.data);
 
     emit ReserveInitialized(
       input.underlyingAsset,

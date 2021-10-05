@@ -120,7 +120,6 @@ contract WevestProtocolDataProvider {
       uint256 currentWvTokenBalance,
       uint256 currentDebt,
       uint256 principalDebt,
-      uint256 liquidityRate,
       bool usageAsCollateralEnabled
     )
   {
@@ -133,7 +132,6 @@ contract WevestProtocolDataProvider {
     currentWvTokenBalance = IERC20Detailed(reserve.wvTokenAddress).balanceOf(user);
     currentDebt = IERC20Detailed(reserve.debtTokenAddress).balanceOf(user);
     principalDebt = IDebtToken(reserve.debtTokenAddress).principalBalanceOf(user);
-    liquidityRate = reserve.currentLiquidityRate;
     usageAsCollateralEnabled = userConfig.isUsingAsCollateral(reserve.id);
   }
 
@@ -142,7 +140,8 @@ contract WevestProtocolDataProvider {
     view
     returns (
       address wvTokenAddress,
-      address debtTokenAddress
+      address debtTokenAddress,
+      address vaultTokenAddress
     )
   {
     DataTypes.ReserveData memory reserve =
@@ -150,7 +149,8 @@ contract WevestProtocolDataProvider {
 
     return (
       reserve.wvTokenAddress,
-      reserve.debtTokenAddress
+      reserve.debtTokenAddress,
+      reserve.vaultTokenAddress
     );
   }
 }

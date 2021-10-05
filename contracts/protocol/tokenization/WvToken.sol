@@ -141,7 +141,7 @@ contract WvToken is
     uint256 amount
   ) external override onlyLendingPool returns (bool) {
     uint256 previousBalance = super.balanceOf(user);
-    // uint256 amountScaled = amount.rayDiv(index);
+
     require(amount != 0, Errors.CT_INVALID_MINT_AMOUNT);
     _mint(user, amount);
     
@@ -234,11 +234,9 @@ contract WvToken is
 
   /**
    * @dev calculates the total supply of the specific wvToken
-   * since the balance of every single user increases over time, the total supply
-   * does that too.
    * @return the current total supply
    **/
-  function totalSupply() public view override(IncentivizedERC20, IERC20) returns (uint256) {
+  /* function totalSupply() public view override(IncentivizedERC20, IERC20) returns (uint256) {
     uint256 currentSupplyScaled = super.totalSupply();
 
     if (currentSupplyScaled == 0) {
@@ -246,7 +244,7 @@ contract WvToken is
     }
 
     return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_underlyingAsset));
-  }
+  } */
 
   /**
    * @dev Returns the scaled total supply of the variable debt token. Represents sum(debt/index)

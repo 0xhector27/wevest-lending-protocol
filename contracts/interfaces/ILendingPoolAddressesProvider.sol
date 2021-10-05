@@ -16,7 +16,6 @@ interface ILendingPoolAddressesProvider {
   event YieldFarmingUpdated(address indexed newAddress);
   event LendingPoolCollateralManagerUpdated(address indexed newAddress);
   event PriceOracleUpdated(address indexed newAddress);
-  event LendingRateOracleUpdated(address indexed newAddress);
   event ProxyCreated(bytes32 id, address indexed newAddress);
   event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
 
@@ -54,14 +53,10 @@ interface ILendingPoolAddressesProvider {
 
   function setPriceOracle(address priceOracle) external;
 
-  function getLendingRateOracle() external view returns (address);
-
-  function setLendingRateOracle(address lendingRateOracle) external;
-
   /** added by SC */
   function getYieldFarmingPool() external view returns (address);
 
-  function setYieldFarmingPoolImpl(address yfpool) external;
+  function setYieldFarmingPoolImpl(address yieldFarming) external;
 
   function getTokenSwap() external view returns (address);
 

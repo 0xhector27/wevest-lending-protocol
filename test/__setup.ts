@@ -1,7 +1,7 @@
 import { initialize } from './helpers/make-suite';
 
 before(async () => {
-    console.log('-> Deploying test environment...');
+    console.log('--> Deploying test environment...\n');
     await initialize();
-    console.log('-> Setup finished...');
+    console.log('\n--> Setup finished...\n');
 });

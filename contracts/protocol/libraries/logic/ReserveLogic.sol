@@ -6,8 +6,6 @@ import {IERC20} from '../../../dependencies/openzeppelin/contracts/IERC20.sol';
 import {SafeERC20} from '../../../dependencies/openzeppelin/contracts/SafeERC20.sol';
 import {IWvToken} from '../../../interfaces/IWvToken.sol';
 import {IDebtToken} from '../../../interfaces/IDebtToken.sol';
-import {IStableDebtToken} from '../../../interfaces/IStableDebtToken.sol';
-import {IVariableDebtToken} from '../../../interfaces/IVariableDebtToken.sol';
 import {IReserveInterestRateStrategy} from '../../../interfaces/IReserveInterestRateStrategy.sol';
 import {ReserveConfiguration} from '../configuration/ReserveConfiguration.sol';
 import {MathUtils} from '../math/MathUtils.sol';
