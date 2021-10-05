@@ -15,6 +15,7 @@ import {Errors} from '../helpers/Errors.sol';
 import {Helpers} from '../helpers/Helpers.sol';
 import {IReserveInterestRateStrategy} from '../../../interfaces/IReserveInterestRateStrategy.sol';
 import {DataTypes} from '../types/DataTypes.sol';
+import "hardhat/console.sol";
 
 /**
  * @title ReserveLogic library
@@ -43,7 +44,6 @@ library ValidationLogic {
     view 
   {
     (bool isActive, bool isFrozen, ) = reserve.configuration.getFlags();
-
     require(amount != 0, Errors.VL_INVALID_AMOUNT);
     require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
     require(!isFrozen, Errors.VL_RESERVE_FROZEN);
@@ -110,8 +110,8 @@ library ValidationLogic {
    * @param asset The address of the asset to borrow
    * @param reserve The reserve state from which the user is borrowing
    * @param userAddress The address of the user
-   * @param amount The amount to be borrowed
-   * @param amountInETH The amount to be borrowed, in ETH
+   * param amount The amount to be borrowed
+   * param amountInETH The amount to be borrowed, in ETH
    * @param reservesData The state of all the reserves
    * @param userConfig The state of the user for the specific reserve
    * @param reserves The addresses of all the active reserves
@@ -122,9 +122,9 @@ library ValidationLogic {
     address asset,
     DataTypes.ReserveData storage reserve,
     address userAddress,
-    uint256 amount,
+    // uint256 amount,
     uint256 leverageRatioMode,
-    uint256 amountInETH,
+    // uint256 amountInETH,
     mapping(address => DataTypes.ReserveData) storage reservesData,
     DataTypes.UserConfigurationMap storage userConfig,
     mapping(uint256 => address) storage reserves,
@@ -139,11 +139,11 @@ library ValidationLogic {
 
     require(vars.isActive, Errors.VL_NO_ACTIVE_RESERVE);
     require(!vars.isFrozen, Errors.VL_RESERVE_FROZEN);
-    require(amount != 0, Errors.VL_INVALID_AMOUNT);
+    // require(amount != 0, Errors.VL_INVALID_AMOUNT);
 
     require(vars.borrowingEnabled, Errors.VL_BORROWING_NOT_ENABLED);
 
-    (
+    /* (
       vars.userCollateralBalanceETH,
       vars.userBorrowBalanceETH,
       vars.currentLtv,
@@ -156,24 +156,33 @@ library ValidationLogic {
       reserves,
       reservesCount,
       oracle
+    ); */
+    vars.userCollateralBalanceETH = GenericLogic.calculateUserTotalCollateral(
+      userAddress,
+      reservesData,
+      userConfig,
+      reserves,
+      reservesCount,
+      oracle
     );
-
+    
     require(vars.userCollateralBalanceETH > 0, Errors.VL_COLLATERAL_BALANCE_IS_0);
 
-    require(
+    /* require(
       vars.healthFactor > GenericLogic.HEALTH_FACTOR_LIQUIDATION_THRESHOLD,
       Errors.VL_HEALTH_FACTOR_LOWER_THAN_LIQUIDATION_THRESHOLD
-    );
+    ); */
 
     //add the current already borrowed amount to the amount requested to calculate the total collateral needed.
-    vars.amountOfCollateralNeededETH = vars.userBorrowBalanceETH.add(amountInETH).percentDiv(
+    /* vars.amountOfCollateralNeededETH = vars.userBorrowBalanceETH.add(amountInETH).percentDiv(
       vars.currentLtv
-    ); //LTV is calculated in percentage
+    );  */
+    //LTV is calculated in percentage
 
-    require(
+    /* require(
       vars.amountOfCollateralNeededETH <= vars.userCollateralBalanceETH,
       Errors.VL_COLLATERAL_CANNOT_COVER_NEW_BORROW
-    );
+    ); */
   }
 
   /**
@@ -196,86 +205,6 @@ library ValidationLogic {
     require(
       amountSent != uint256(-1) || msg.sender == onBehalfOf,
       Errors.VL_NO_EXPLICIT_AMOUNT_TO_REPAY_ON_BEHALF
-    );
-  }
-
-  /**
-   * @dev Validates a swap of borrow rate mode.
-   * @param reserve The reserve state on which the user is swapping the rate
-   * @param userConfig The user reserves configuration
-   * @param stableDebt The stable debt of the user
-   * @param variableDebt The variable debt of the user
-   * @param currentRateMode The rate mode of the borrow
-   */
-  function validateSwapRateMode(
-    DataTypes.ReserveData storage reserve,
-    DataTypes.UserConfigurationMap storage userConfig,
-    uint256 stableDebt,
-    uint256 variableDebt,
-    DataTypes.InterestRateMode currentRateMode
-  ) external view {
-    (bool isActive, bool isFrozen, ) = reserve.configuration.getFlags();
-
-    require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
-    require(!isFrozen, Errors.VL_RESERVE_FROZEN);
-
-    if (currentRateMode == DataTypes.InterestRateMode.STABLE) {
-      require(stableDebt > 0, Errors.VL_NO_STABLE_RATE_LOAN_IN_RESERVE);
-    } else if (currentRateMode == DataTypes.InterestRateMode.VARIABLE) {
-      require(variableDebt > 0, Errors.VL_NO_VARIABLE_RATE_LOAN_IN_RESERVE);
-      /**
-       * user wants to swap to stable, before swapping we need to ensure that
-       * 1. stable borrow rate is enabled on the reserve
-       * 2. user is not trying to abuse the reserve by depositing
-       * more collateral than he is borrowing, artificially lowering
-       * the interest rate, borrowing at variable, and switching to stable
-       **/
-      // require(stableRateEnabled, Errors.VL_STABLE_BORROWING_NOT_ENABLED);
-
-      require(
-        !userConfig.isUsingAsCollateral(reserve.id) ||
-          reserve.configuration.getLtv() == 0 ||
-          stableDebt.add(variableDebt) > IERC20(reserve.wvTokenAddress).balanceOf(msg.sender),
-        Errors.VL_COLLATERAL_SAME_AS_BORROWING_CURRENCY
-      );
-    } else {
-      revert(Errors.VL_INVALID_INTEREST_RATE_MODE_SELECTED);
-    }
-  }
-
-  /**
-   * @dev Validates a stable borrow rate rebalance action
-   * @param reserve The reserve state on which the user is getting rebalanced
-   * @param reserveAddress The address of the reserve
-   * @param stableDebtToken The stable debt token instance
-   * @param variableDebtToken The variable debt token instance
-   * @param wvTokenAddress The address of the aToken contract
-   */
-  function validateRebalanceStableBorrowRate(
-    DataTypes.ReserveData storage reserve,
-    address reserveAddress,
-    IERC20 stableDebtToken,
-    IERC20 variableDebtToken,
-    address wvTokenAddress
-  ) external view {
-    (bool isActive, , ) = reserve.configuration.getFlags();
-
-    require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
-
-    //if the usage ratio is below 95%, no rebalances are needed
-    uint256 totalDebt =
-      stableDebtToken.totalSupply().add(variableDebtToken.totalSupply()).wadToRay();
-    uint256 availableLiquidity = IERC20(reserveAddress).balanceOf(wvTokenAddress).wadToRay();
-    uint256 usageRatio = totalDebt == 0 ? 0 : totalDebt.rayDiv(availableLiquidity.add(totalDebt));
-
-    //if the liquidity rate is below REBALANCE_UP_THRESHOLD of the max variable APR at 95% usage,
-    //then we allow rebalancing of the stable rate positions.
-
-    uint256 currentLiquidityRate = reserve.currentLiquidityRate;
-
-    require(
-      usageRatio >= REBALANCE_UP_USAGE_RATIO_THRESHOLD,
-      Errors.LP_INTEREST_RATE_REBALANCE_CONDITIONS_NOT_MET
     );
   }
 

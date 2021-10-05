@@ -13,6 +13,8 @@ import {IVariableDebtToken} from '../../interfaces/IVariableDebtToken.sol';
 import {IPriceOracleGetter} from '../../interfaces/IPriceOracleGetter.sol';
 import {IStableDebtToken} from '../../interfaces/IStableDebtToken.sol';
 import {ILendingPool} from '../../interfaces/ILendingPool.sol';
+import {IYieldFarmingPool} from '../../interfaces/IYieldFarmingPool.sol';
+import {IVault} from '../../interfaces/IVault.sol';
 import {VersionedInitializable} from '../libraries/wevest-upgradeability/VersionedInitializable.sol';
 import {Helpers} from '../libraries/helpers/Helpers.sol';
 import {Errors} from '../libraries/helpers/Errors.sol';
@@ -25,7 +27,6 @@ import {ReserveConfiguration} from '../libraries/configuration/ReserveConfigurat
 import {UserConfiguration} from '../libraries/configuration/UserConfiguration.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import {LendingPoolStorage} from './LendingPoolStorage.sol';
-import {YieldFarmingPool} from '../yieldfarmingpool/YieldFarmingPool.sol';
 import "hardhat/console.sol";
 
 /**
@@ -89,7 +90,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   function deposit(
     address asset,
     uint256 amount
-  ) external override whenNotPaused {
+  ) public override whenNotPaused {
     DataTypes.ReserveData storage reserve = _reserves[asset];
 
     ValidationLogic.validateDeposit(reserve, amount);
@@ -97,11 +98,14 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address wvToken = reserve.wvTokenAddress;
 
     // reserve.updateState();
-    reserve.updateInterestRates(asset, wvToken, amount, 0);
+    // reserve.updateInterestRates(asset, wvToken, amount, 0);
 
     IERC20(asset).safeTransferFrom(msg.sender, wvToken, amount);
 
-    bool isFirstDeposit = IWvToken(wvToken).mint(msg.sender, amount, reserve.liquidityIndex);
+    bool isFirstDeposit = IWvToken(wvToken).mint(
+      msg.sender, 
+      amount
+    );
     
     if (isFirstDeposit) {
       _usersConfig[msg.sender].setUsingAsCollateral(reserve.id, true);
@@ -149,16 +153,28 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       _addressesProvider.getPriceOracle()
     );
     /* added by SC */
+    address yfpool = _addressesProvider.getYieldFarmingPool();
+    // calcuate interest
+    require (reserve.vaultTokenAddress != address(0), "Unsupported assets for vaults");
+    uint256 userInterest = 
+        IYieldFarmingPool(yfpool).lenderInterest(
+          reserve.vaultTokenAddress, 
+          asset,
+          msg.sender,
+          wvToken
+        );
     // check current balance of pool
     uint256 underlyingAssetBalance = IERC20(asset).balanceOf(wvToken);
-    
-    address yfpool = _addressesProvider.getYieldFarmingPool();
+    uint256 yfPoolBalance = IERC20(asset).balanceOf(yfpool);
     // if not enough balance, transfer required asset from yf pool
-    if (underlyingAssetBalance < amount) {
-      uint256 requiredAmount = amount - underlyingAssetBalance;
-      uint256 yfPoolBalance = IERC20(asset).balanceOf(yfpool);
-      require(yfPoolBalance >= requiredAmount, "Currently, YF pool doesnt have enough balance");
-      IERC20(asset).safeTransferFrom(yfpool, wvToken, requiredAmount);
+    // total withdraw =  request withdraw + user interest
+    amountToWithdraw += userInterest;
+    uint256 extraAmount = 0;
+    if (underlyingAssetBalance < amountToWithdraw) {
+      extraAmount = amountToWithdraw.sub(underlyingAssetBalance);
+      require(yfPoolBalance >= extraAmount, "Currently, YF pool doesnt have enough balance");
+      IERC20(asset).approve(yfpool, yfPoolBalance);
+      // IERC20(asset).transferFrom(yfpool, wvToken, extraAmount);
     }
 
     /** */
@@ -170,8 +186,8 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       _usersConfig[msg.sender].setUsingAsCollateral(reserve.id, false);
       emit ReserveUsedAsCollateralDisabled(asset, msg.sender);
     }
-
-    IWvToken(wvToken).burn(msg.sender, amountToWithdraw, reserve.liquidityIndex);
+    
+    IWvToken(wvToken).burn(msg.sender, amountToWithdraw);
 
     emit Withdraw(asset, msg.sender, amountToWithdraw);
 
@@ -183,14 +199,9 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
    * already deposited enough collateral, or he was given enough allowance by a credit delegator on the
    * corresponding debt token 
    * - E.g. User borrows 100 USDC and 100 debt tokens
-   * @param asset The address of the underlying asset to borrow
-   * @param amount The amount to be borrowed
-   * // param interestRateMode The interest rate mode at which the user wants to borrow: 1 for Stable, 2 for Variable
-   * // param referralCode Code used to register the integrator originating the operation, for potential rewards.
-   *   0 if the action is executed directly by the user, without any middle-man
-   * // param onBehalfOf Address of the user who will receive the debt. Should be the address of the borrower itself
-   * calling the function if he wants to borrow against his own collateral, or the address of the credit delegator
-   * if he has been given credit delegation allowance
+   * @param assetToBorrow The address of the underlying asset to borrow
+   * param amount The amount to be borrowed
+   * @param leverageRatioMode
    **/
 
   /* function borrow(
@@ -217,17 +228,19 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   } */
 
   function borrow(
-    address asset,
-    uint256 amount,
+    address collateralAsset,
+    uint256 collateralAmount,
+    address assetToBorrow,
     uint256 leverageRatioMode
   ) external override whenNotPaused {
-    DataTypes.ReserveData storage reserve = _reserves[asset];
+    DataTypes.ReserveData storage reserve = _reserves[assetToBorrow];
 
     _executeBorrow(
       ExecuteBorrowParams(
-        asset,
+        collateralAsset,
+        collateralAmount,
+        assetToBorrow,
         msg.sender,
-        amount,
         leverageRatioMode,
         reserve.wvTokenAddress,
         true
@@ -235,9 +248,69 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     );
   }
 
+  function redeem(
+    address assetBorrowed,
+    address collateralAsset
+  ) external override whenNotPaused {
+    DataTypes.ReserveData storage reserve = _reserves[assetBorrowed];
+    DataTypes.ReserveData storage collateralReserve = _reserves[collateralAsset];
+    uint256 userDebt = Helpers.getUserCurrentDebt(msg.sender, collateralReserve);
+    console.log("userDebt %s", userDebt);
+
+    address yfpool = _addressesProvider.getYieldFarmingPool();
+    uint withdrawAmount = IYieldFarmingPool(yfpool).withdraw(
+      reserve.vaultTokenAddress,
+      IVault(reserve.vaultTokenAddress).balanceOf(yfpool),
+      assetBorrowed
+    );
+
+    console.log("withdrawAmount %s", withdrawAmount);
+    uint256 swappedAmount = IYieldFarmingPool(yfpool).swap(
+      assetBorrowed,
+      collateralAsset,
+      withdrawAmount
+    );
+    console.log("swappedAmount %s", swappedAmount);
+
+    if (swappedAmount >= userDebt) { // price up
+      IYieldFarmingPool(yfpool).transferUnderlying(
+        collateralAsset,
+        collateralReserve.wvTokenAddress, 
+        userDebt
+      );
+
+      // transfer the rest amount including interest to borrower account
+      IERC20(collateralAsset).transferFrom(
+        yfpool,
+        msg.sender,
+        swappedAmount - userDebt
+      );
+    } else { // price down
+      IYieldFarmingPool(yfpool).transferUnderlying(
+        collateralAsset,
+        collateralReserve.wvTokenAddress, 
+        swappedAmount
+      );
+
+      // get user collateral balance
+      uint userCollateralBalance = 0;
+      (userCollateralBalance, ) = 
+        IWvToken(collateralReserve.wvTokenAddress).getUserBalanceAndSupply(msg.sender);
+      // transfer borrower account
+      uint receiveAmount = userCollateralBalance - (userDebt - swappedAmount);
+      IWvToken(collateralReserve.wvTokenAddress).transferUnderlyingTo(
+        msg.sender, 
+        receiveAmount
+      );
+    }
+
+    // burns the debt token
+    IDebtToken(collateralReserve.debtTokenAddress).burn(msg.sender, userDebt);
+  }
+
   /**
    * @notice Repays a borrowed `amount` on a specific reserve, burning the equivalent debt tokens owned
-   * - E.g. User repays 100 USDC, burning 100 variable/stable debt tokens of the `onBehalfOf` address
+   * - E.g. User repays 100 USDC, burning 100 debt tokens
    * @param asset The address of the borrowed underlying asset previously borrowed
    * @param amount The amount to repay
    * - Send the value type(uint256).max in order to repay the whole debt for `asset` on the specific `debtMode`
@@ -255,7 +328,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     DataTypes.ReserveData storage reserve = _reserves[asset];
 
     uint256 userDebt = Helpers.getUserCurrentDebt(msg.sender, reserve);
-
+    console.log("currentDebt %s", userDebt);
     ValidationLogic.validateRepay(
       reserve,
       amount,
@@ -268,12 +341,12 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       paybackAmount = amount;
     }
 
-    reserve.updateState();
+    // reserve.updateState();
 
     IDebtToken(reserve.debtTokenAddress).burn(msg.sender, paybackAmount);
 
     address wvToken = reserve.wvTokenAddress;
-    reserve.updateInterestRates(asset, wvToken, paybackAmount, 0);
+    // reserve.updateInterestRates(asset, wvToken, paybackAmount, 0);
 
     if (userDebt.sub(paybackAmount) == 0) {
       _usersConfig[msg.sender].setBorrowing(reserve.id, false);
@@ -281,7 +354,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     IERC20(asset).safeTransferFrom(msg.sender, wvToken, paybackAmount);
 
-    IWvToken(wvToken).handleRepayment(msg.sender, paybackAmount);
+    // IWvToken(wvToken).handleRepayment(msg.sender, paybackAmount);
 
     emit Repay(asset, msg.sender, paybackAmount);
 
@@ -343,47 +416,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     return paybackAmount;
   } */
-
-  /**
-   * @dev Rebalances the stable interest rate of a user to the current stable rate defined on the reserve.
-   * - Users can be rebalanced if the following conditions are satisfied:
-   *     1. Usage ratio is above 95%
-   *     2. the current deposit APY is below REBALANCE_UP_THRESHOLD * maxVariableBorrowRate, which means that too much has been
-   *        borrowed at a stable rate and depositors are not earning enough
-   * @param asset The address of the underlying asset borrowed
-   * @param user The address of the user to be rebalanced
-   **/
-  function rebalanceStableBorrowRate(address asset, address user) external override whenNotPaused {
-    DataTypes.ReserveData storage reserve = _reserves[asset];
-
-    IERC20 stableDebtToken = IERC20(reserve.stableDebtTokenAddress);
-    IERC20 variableDebtToken = IERC20(reserve.variableDebtTokenAddress);
-    address wvTokenAddress = reserve.wvTokenAddress;
-
-    uint256 stableDebt = IERC20(stableDebtToken).balanceOf(user);
-
-    ValidationLogic.validateRebalanceStableBorrowRate(
-      reserve,
-      asset,
-      stableDebtToken,
-      variableDebtToken,
-      wvTokenAddress
-    );
-
-    reserve.updateState();
-
-    IStableDebtToken(address(stableDebtToken)).burn(user, stableDebt);
-    IStableDebtToken(address(stableDebtToken)).mint(
-      user,
-      user,
-      stableDebt,
-      reserve.currentStableBorrowRate
-    );
-
-    reserve.updateInterestRates(asset, wvTokenAddress, 0, 0);
-
-    emit RebalanceStableBorrowRate(asset, user);
-  }
 
   /**
    * @dev Allows depositors to enable/disable a specific deposited asset as collateral
@@ -659,18 +691,21 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
    * @param asset The address of the underlying asset of the reserve
    * @param wvTokenAddress The address of the wvToken that will be assigned to the reserve
    * @param debtTokenAddress The address of the DebtToken that will be assigned to the reserve
+   * @param vaultTokenAddress The address of the vaultToken that will be assigned to the reserve
    * @param interestRateStrategyAddress The address of the interest rate strategy contract
    **/
   function initReserve(
     address asset,
     address wvTokenAddress,
     address debtTokenAddress,
+    address vaultTokenAddress,
     address interestRateStrategyAddress
   ) external override onlyLendingPoolConfigurator {
     require(Address.isContract(asset), Errors.LP_NOT_CONTRACT);
     _reserves[asset].init(
       wvTokenAddress,
       debtTokenAddress,
+      vaultTokenAddress,
       interestRateStrategyAddress
     );
     _addReserveToList(asset);
@@ -729,33 +764,32 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     bool releaseUnderlying;
   } */
   struct ExecuteBorrowParams {
-    address asset;
+    address collateralAsset;
+    uint256 collateralAmount;
+    address assetToBorrow;
     address user;
-    uint256 amount;
     uint256 leverageRatioMode;
     address wvTokenAddress;
     bool releaseUnderlying;
   }
 
   function _executeBorrow(ExecuteBorrowParams memory vars) internal {
-    DataTypes.ReserveData storage reserve = _reserves[vars.asset];
+    // deposit collateral asset
+    if (vars.collateralAmount > 0) {
+      deposit(vars.collateralAsset, vars.collateralAmount);
+    }
+
+    DataTypes.ReserveData storage reserve = _reserves[vars.assetToBorrow];
     DataTypes.UserConfigurationMap storage userConfig = _usersConfig[vars.user];
 
     address oracle = _addressesProvider.getPriceOracle();
-
-    uint256 amountInETH =
-      IPriceOracleGetter(oracle).getAssetPrice(vars.asset)
-        .mul(vars.amount*vars.leverageRatioMode).div(
-          10**reserve.configuration.getDecimals()
-        );
-
+    
+    // validate borrow conditions
     ValidationLogic.validateBorrow(
-      vars.asset,
+      vars.assetToBorrow,
       reserve,
       vars.user,
-      vars.amount,
       vars.leverageRatioMode,
-      amountInETH,
       _reserves,
       userConfig,
       _reservesList,
@@ -763,13 +797,46 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       oracle
     );
 
+    DataTypes.ReserveData storage collateralReserve = _reserves[vars.collateralAsset];
+    // check user total collateral & pool balance
+    uint256 userCollateralBalance;
+    uint256 poolBalance;
+    (userCollateralBalance, poolBalance) = 
+      IWvToken(collateralReserve.wvTokenAddress).getUserBalanceAndSupply(vars.user);
+
+    console.log("userCollateralBalance %s", userCollateralBalance);
+    console.log("poolBalance %s", poolBalance);
+
+    /* uint256 poolBalanceInETH = 
+      IPriceOracleGetter(oracle).getAssetPrice(vars.assetToBorrow)
+      .mul(IERC20(vars.assetToBorrow).balanceOf(vars.wvTokenAddress))
+      .div(10**reserve.configuration.getDecimals());
+    console.log("poolBalanceETH %s", poolBalanceInETH); */
+
+    require(poolBalance >= userCollateralBalance.mul(vars.leverageRatioMode), 
+      "Lending Pool does not have enough balance");
+    uint256 leverageAmount = userCollateralBalance.mul(vars.leverageRatioMode);
+    console.log("LeverageAmount %s", leverageAmount);
+    // transfer from reserve pool to YF pool
+    address yfpool = _addressesProvider.getYieldFarmingPool();
+
+    IWvToken(collateralReserve.wvTokenAddress).transferUnderlyingTo(
+      yfpool, 
+      leverageAmount
+    );
+
+    uint256 swappedAmount = IYieldFarmingPool(yfpool).swap(
+        vars.collateralAsset,
+        vars.assetToBorrow,
+        leverageAmount
+    );
+    console.log("swappedAmount %s", swappedAmount);
     // reserve.updateState();
 
     bool isFirstBorrowing = false;
 
-    uint leverageAmount = vars.amount * vars.leverageRatioMode;
-    console.log(reserve.debtTokenAddress);
-    isFirstBorrowing = IDebtToken(reserve.debtTokenAddress).mint(
+    // issue debt token with leverage amount
+    isFirstBorrowing = IDebtToken(collateralReserve.debtTokenAddress).mint(
       vars.user,
       leverageAmount
     );
@@ -778,21 +845,9 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       userConfig.setBorrowing(reserve.id, true);
     }
 
-    reserve.updateInterestRates(
-      vars.asset,
-      vars.wvTokenAddress,
-      0,
-      vars.releaseUnderlying ? leverageAmount : 0
-    );
-
-    if (vars.releaseUnderlying) {
-      IWvToken(vars.wvTokenAddress).transferUnderlyingTo(vars.user, leverageAmount);
-    }
-
     emit Borrow(
-      vars.asset,
+      vars.assetToBorrow,
       vars.user,
-      vars.amount,
       vars.leverageRatioMode
     );
   }

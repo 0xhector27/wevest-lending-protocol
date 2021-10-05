@@ -99,6 +99,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       input.underlyingAsset,
       wvTokenProxyAddress,
       debtTokenProxyAddress,
+      input.vaultTokenAddress,
       input.interestRateStrategyAddress
     );
 
@@ -116,6 +117,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       input.underlyingAsset,
       wvTokenProxyAddress,
       debtTokenProxyAddress,
+      input.vaultTokenAddress,
       input.interestRateStrategyAddress
     );
   }

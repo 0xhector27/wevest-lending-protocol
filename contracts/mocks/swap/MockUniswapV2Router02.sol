@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.6.12;
 
-import {IUniswapV2Router02} from '../../interfaces/IUniswapV2Router02.sol';
+import {IUniswapV2Router} from '../../interfaces/IUniswapV2Router.sol';
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {MintableERC20} from '../tokens/MintableERC20.sol';
 
-contract MockUniswapV2Router02 is IUniswapV2Router02 {
+contract MockUniswapV2Router02 is IUniswapV2Router {
   mapping(address => uint256) internal _amountToReturn;
   mapping(address => uint256) internal _amountToSwap;
   mapping(address => mapping(address => mapping(uint256 => uint256))) internal _amountsIn;

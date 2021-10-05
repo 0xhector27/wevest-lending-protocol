@@ -163,7 +163,7 @@ contract VariableDebtToken is DebtTokenBase, IVariableDebtToken {
    * @return The principal balance of the user
    * @return The principal total supply
    **/
-  function getScaledUserBalanceAndSupply(address user)
+  function getUserBalanceAndSupply(address user)
     external
     view
     override

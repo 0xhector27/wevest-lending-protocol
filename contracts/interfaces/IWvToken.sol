@@ -11,33 +11,31 @@ interface IWvToken is IERC20, IScaledBalanceToken, IInitializableWvToken {
    * @dev Emitted after the mint action
    * @param from The address performing the mint
    * @param value The amount being
-   * @param index The new liquidity index of the reserve
    **/
-  event Mint(address indexed from, uint256 value, uint256 index);
+  event Mint(
+    address indexed from, 
+    uint256 value
+  );
 
   /**
    * @dev Mints `amount` wvTokens to `user`
    * @param user The address receiving the minted tokens
    * @param amount The amount of tokens getting minted
-   * @param index The new liquidity index of the reserve
    * @return `true` if the the previous balance of the user was 0
    */
   function mint(
     address user,
-    uint256 amount,
-    uint256 index
+    uint256 amount
   ) external returns (bool);
 
   /**
    * @dev Emitted after wvTokens are burned
    * @param from The owner of the wvTokens, getting them burned
    * @param value The amount being burned
-   * @param index The new liquidity index of the reserve
    **/
   event Burn(
     address indexed from, 
-    uint256 value, 
-    uint256 index
+    uint256 value
   );
 
   /**
@@ -54,12 +52,11 @@ interface IWvToken is IERC20, IScaledBalanceToken, IInitializableWvToken {
    * @param user The owner of the wvTokens, getting them burned
    * // param receiverOfUnderlying The address that will receive the underlying
    * @param amount The amount being burned
-   * @param index The new liquidity index of the reserve
+   * param index The new liquidity index of the reserve
    **/
   function burn(
     address user,
-    uint256 amount,
-    uint256 index
+    uint256 amount
   ) external;
 
   /**

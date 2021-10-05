@@ -17,8 +17,9 @@ interface IWETHGateway {
   ) external payable;
 
   function borrowETH(
+    address collateralAddress,
+    uint256 collateralAmount,
     address lendingPool,
-    uint256 amount,
     uint256 leverageRatioMode
   ) external;
 }

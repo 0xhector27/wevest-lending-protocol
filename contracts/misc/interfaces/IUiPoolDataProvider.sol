@@ -25,8 +25,9 @@ interface IUiPoolDataProvider {
     uint40 lastUpdateTimestamp;
     address wvTokenAddress;
     address debtTokenAddress;
+    address vaultTokenAddress;
     address interestRateStrategyAddress;
-    //
+    
     uint256 availableLiquidity;
     uint256 totalDebt;
     uint256 priceInEth;

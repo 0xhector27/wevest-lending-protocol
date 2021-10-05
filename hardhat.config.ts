@@ -12,6 +12,8 @@ import "@openzeppelin/hardhat-upgrades";
 
 dotenv.config();
 
+const DEFAULT_BLOCK_GAS_LIMIT = 8000000;
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -38,6 +40,15 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
+    hardhat: {
+      hardfork: 'berlin',
+      gas: DEFAULT_BLOCK_GAS_LIMIT,
+      gasPrice: 8000000000,
+      chainId: 31337,
+      forking: {
+        url: process.env.MAINNET_URL || "",
+      }
+    },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:
@@ -50,6 +61,9 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  mocha: {
+    timeout: 0
   },
   typechain: {
     outDir: 'types',

@@ -11,7 +11,7 @@ import {WadRayMath} from '../math/WadRayMath.sol';
 import {PercentageMath} from '../math/PercentageMath.sol';
 import {IPriceOracleGetter} from '../../../interfaces/IPriceOracleGetter.sol';
 import {DataTypes} from '../types/DataTypes.sol';
-
+import "hardhat/console.sol";
 /**
  * @title GenericLogic library
  * @author Wevest
@@ -136,6 +136,45 @@ library GenericLogic {
     bool userUsesReserveAsCollateral;
   }
 
+  function calculateUserTotalCollateral(
+    address user,
+    mapping(address => DataTypes.ReserveData) storage reservesData,
+    DataTypes.UserConfigurationMap memory userConfig,
+    mapping(uint256 => address) storage reserves,
+    uint256 reservesCount,
+    address oracle
+  )
+    public
+    view
+    returns (uint256)
+  {
+    CalculateUserAccountDataVars memory vars;
+    if (userConfig.isEmpty()) {
+      return 0;
+    }
+    for (vars.i = 0; vars.i < reservesCount; vars.i++) {
+      if (!userConfig.isUsingAsCollateralOrBorrowing(vars.i)) {
+        continue;
+      }
+
+      vars.currentReserveAddress = reserves[vars.i];
+      DataTypes.ReserveData storage currentReserve = reservesData[vars.currentReserveAddress];
+      (, , , vars.decimals, ) = currentReserve
+        .configuration
+        .getParams();
+      
+      vars.tokenUnit = 10**vars.decimals;
+      vars.reserveUnitPrice = IPriceOracleGetter(oracle).getAssetPrice(vars.currentReserveAddress);
+      if(userConfig.isUsingAsCollateral(vars.i)) {
+        vars.compoundedLiquidityBalance = IERC20(currentReserve.wvTokenAddress).balanceOf(user);
+        uint256 liquidityBalanceETH =
+          vars.reserveUnitPrice.mul(vars.compoundedLiquidityBalance).div(vars.tokenUnit);
+        vars.totalCollateralInETH = vars.totalCollateralInETH.add(liquidityBalanceETH);
+      }
+    }
+    return vars.totalCollateralInETH;
+  }
+
   /**
    * @dev Calculates the user data across the reserves.
    * this includes the total liquidity/collateral/borrow balances in ETH,
@@ -166,7 +205,6 @@ library GenericLogic {
     )
   {
     CalculateUserAccountDataVars memory vars;
-
     if (userConfig.isEmpty()) {
       return (0, 0, 0, 0, uint256(-1));
     }
@@ -184,7 +222,8 @@ library GenericLogic {
 
       vars.tokenUnit = 10**vars.decimals;
       vars.reserveUnitPrice = IPriceOracleGetter(oracle).getAssetPrice(vars.currentReserveAddress);
-
+      console.log("reserveUnitePrice", vars.reserveUnitPrice);
+      console.log(vars.ltv, vars.liquidationThreshold, vars.decimals);
       if (vars.liquidationThreshold != 0 && userConfig.isUsingAsCollateral(vars.i)) {
         vars.compoundedLiquidityBalance = IERC20(currentReserve.wvTokenAddress).balanceOf(user);
 

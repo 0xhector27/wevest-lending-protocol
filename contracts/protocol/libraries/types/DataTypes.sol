@@ -21,6 +21,8 @@ library DataTypes {
     address wvTokenAddress;
     // debt token address
     address debtTokenAddress;
+    // yearn finance vault address
+    address vaultTokenAddress;
     
     address stableDebtTokenAddress;
     address variableDebtTokenAddress;

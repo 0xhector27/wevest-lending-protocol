@@ -6,6 +6,7 @@ interface ILendingPoolConfigurator {
   struct InitReserveInput {
     address wvTokenImpl;
     address debtTokenImpl;
+    address vaultTokenAddress;
     uint8 underlyingAssetDecimals;
     address interestRateStrategyAddress;
     address underlyingAsset;
@@ -43,6 +44,7 @@ interface ILendingPoolConfigurator {
     address indexed asset,
     address indexed wvToken,
     address debtToken,
+    address vaultToken,
     address interestRateStrategyAddress
   );
 

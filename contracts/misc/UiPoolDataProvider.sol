@@ -64,6 +64,7 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
       reserveData.lastUpdateTimestamp = baseData.lastUpdateTimestamp;
       reserveData.wvTokenAddress = baseData.wvTokenAddress;
       reserveData.debtTokenAddress = baseData.debtTokenAddress;
+      reserveData.vaultTokenAddress = baseData.vaultTokenAddress;
       reserveData.interestRateStrategyAddress = baseData.interestRateStrategyAddress;
       reserveData.priceInEth = oracle.getAssetPrice(reserveData.underlyingAsset);
 
@@ -156,6 +157,7 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
       reserveData.lastUpdateTimestamp = baseData.lastUpdateTimestamp;
       reserveData.wvTokenAddress = baseData.wvTokenAddress;
       reserveData.debtTokenAddress = baseData.debtTokenAddress;
+      reserveData.vaultTokenAddress = baseData.vaultTokenAddress;
       reserveData.interestRateStrategyAddress = baseData.interestRateStrategyAddress;
       reserveData.priceInEth = oracle.getAssetPrice(reserveData.underlyingAsset);
 

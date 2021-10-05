@@ -27,6 +27,7 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
 
   // added by SC
   bytes32 private constant YIELD_FARMING_POOL = 'YIELD_FARMING_POOL';
+  bytes32 private constant TOKEN_SWAP = 'TOKEN_SWAP';
 
   constructor(string memory marketId) public {
     _setMarketId(marketId);
@@ -136,9 +137,17 @@ contract LendingPoolAddressesProvider is Ownable, ILendingPoolAddressesProvider 
 
   function setYieldFarmingPoolImpl(address yfpool) external override onlyOwner {
     _updateImpl(YIELD_FARMING_POOL, yfpool);
-    emit LendingPoolConfiguratorUpdated(yfpool);
+    emit YieldFarmingUpdated(yfpool);
   }
 
+  function getTokenSwap() external view override returns (address) {
+    return getAddress(TOKEN_SWAP);
+  }
+
+  function setTokenSwapImpl(address tokenSwap) external override onlyOwner {
+    _updateImpl(TOKEN_SWAP, tokenSwap);
+    emit YieldFarmingUpdated(tokenSwap);
+  }
   /**
    * @dev Returns the address of the LendingPoolCollateralManager. Since the manager is used
    * through delegateCall within the LendingPool contract, the proxy contract pattern does not work properly hence
