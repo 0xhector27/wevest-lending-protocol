@@ -246,9 +246,11 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   ) external override whenNotPaused {
     DataTypes.ReserveData storage reserve = _reserves[assetBorrowed];
     DataTypes.ReserveData storage collateralReserve = _reserves[collateralAsset];
+    // check user total loan
     uint256 userDebt = Helpers.getUserCurrentDebt(msg.sender, collateralReserve);
     console.log("userDebt %s", userDebt);
-
+    
+    // validate redeem conditions
     ValidationLogic.validateRedeem(collateralReserve, amount, userDebt);
 
     address yfpool = _addressesProvider.getYieldFarmingPool();
@@ -395,7 +397,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
    * @param debtAsset The address of the underlying borrowed asset to be repaid with the liquidation
    * @param user The address of the borrower getting liquidated
    * @param debtToCover The debt amount of borrowed `asset` the liquidator wants to cover
-   * @param receiveAToken `true` if the liquidators wants to receive the collateral wvTokens, `false` if he wants
+   * @param receiveWvToken `true` if the liquidators wants to receive the collateral wvTokens, `false` if he wants
    * to receive the underlying collateral asset directly
    **/
   function liquidationCall(
@@ -403,7 +405,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address debtAsset,
     address user,
     uint256 debtToCover,
-    bool receiveAToken
+    bool receiveWvToken
   ) external override whenNotPaused {
     address collateralManager = _addressesProvider.getLendingPoolCollateralManager();
 
@@ -416,7 +418,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
           debtAsset,
           user,
           debtToCover,
-          receiveAToken
+          receiveWvToken
         )
       );
 

@@ -155,7 +155,9 @@ contract LendingPoolCollateralManager is
       }
     }
 
-    debtReserve.updateState();
+    // This is for updating reserve's liquidity index and variable borrow index
+    // so we dont need this function
+    // debtReserve.updateState();
 
     if (vars.userDebt >= vars.actualDebtToLiquidate) {
       IDebtToken(debtReserve.debtTokenAddress).burn(
@@ -167,12 +169,12 @@ contract LendingPoolCollateralManager is
       );
     }
 
-    debtReserve.updateInterestRates(
+    /* debtReserve.updateInterestRates(
       debtAsset,
       debtReserve.wvTokenAddress,
       vars.actualDebtToLiquidate,
       0
-    );
+    ); */
 
     if (receiveWvToken) {
       vars.liquidatorPreviousWvTokenBalance = IERC20(vars.collateralWVtoken).balanceOf(msg.sender);
@@ -184,13 +186,13 @@ contract LendingPoolCollateralManager is
         emit ReserveUsedAsCollateralEnabled(collateralAsset, msg.sender);
       }
     } else {
-      collateralReserve.updateState();
-      collateralReserve.updateInterestRates(
+      // collateralReserve.updateState();
+      /* collateralReserve.updateInterestRates(
         collateralAsset,
         address(vars.collateralWVtoken),
         0,
         vars.maxCollateralToLiquidate
-      );
+      ); */
 
       // Burn the equivalent amount of wvToken, sending the underlying to the liquidator
       vars.collateralWVtoken.burn(

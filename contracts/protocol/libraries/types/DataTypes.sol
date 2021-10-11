@@ -23,9 +23,6 @@ library DataTypes {
     address debtTokenAddress;
     // yearn finance vault address
     address vaultTokenAddress;
-    
-    address stableDebtTokenAddress;
-    address variableDebtTokenAddress;
     //address of the interest rate strategy
     address interestRateStrategyAddress;
     //the id of the reserve. Represents the position in the list of the active reserves
@@ -51,4 +48,6 @@ library DataTypes {
   }
 
   enum InterestRateMode {NONE, STABLE, VARIABLE}
+
+  enum LeverageRatioMode {HALF, ONE, TWO, THREE}
 }

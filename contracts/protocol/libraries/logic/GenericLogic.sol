@@ -222,8 +222,10 @@ library GenericLogic {
 
       vars.tokenUnit = 10**vars.decimals;
       vars.reserveUnitPrice = IPriceOracleGetter(oracle).getAssetPrice(vars.currentReserveAddress);
+      
       console.log("reserveUnitePrice", vars.reserveUnitPrice);
       console.log(vars.ltv, vars.liquidationThreshold, vars.decimals);
+
       if (vars.liquidationThreshold != 0 && userConfig.isUsingAsCollateral(vars.i)) {
         vars.compoundedLiquidityBalance = IERC20(currentReserve.wvTokenAddress).balanceOf(user);
 
@@ -239,11 +241,8 @@ library GenericLogic {
       }
 
       if (userConfig.isBorrowing(vars.i)) {
-        vars.compoundedBorrowBalance = IERC20(currentReserve.stableDebtTokenAddress).balanceOf(
+        vars.compoundedBorrowBalance = IERC20(currentReserve.debtTokenAddress).balanceOf(
           user
-        );
-        vars.compoundedBorrowBalance = vars.compoundedBorrowBalance.add(
-          IERC20(currentReserve.variableDebtTokenAddress).balanceOf(user)
         );
 
         vars.totalDebtInETH = vars.totalDebtInETH.add(
