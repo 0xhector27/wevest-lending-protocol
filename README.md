@@ -30,3 +30,15 @@ INFURA_KEY=
 ETHERSCAN_KEY=
 
 ```
+
+## How to run
+
+```
+npm run compile
+
+npm run test
+
+```
+
+## Author
+Kei Nakano

@@ -8,7 +8,7 @@
     "test": "npx hardhat test"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kei Nakano",
   "license": "ISC",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
