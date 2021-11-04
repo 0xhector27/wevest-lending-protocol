@@ -11,7 +11,7 @@ import {WadRayMath} from '../math/WadRayMath.sol';
 import {PercentageMath} from '../math/PercentageMath.sol';
 import {IPriceOracleGetter} from '../../../interfaces/IPriceOracleGetter.sol';
 import {DataTypes} from '../types/DataTypes.sol';
-import "hardhat/console.sol";
+
 /**
  * @title GenericLogic library
  * @author Wevest
@@ -222,9 +222,6 @@ library GenericLogic {
 
       vars.tokenUnit = 10**vars.decimals;
       vars.reserveUnitPrice = IPriceOracleGetter(oracle).getAssetPrice(vars.currentReserveAddress);
-      
-      console.log("reserveUnitePrice", vars.reserveUnitPrice);
-      console.log(vars.ltv, vars.liquidationThreshold, vars.decimals);
 
       if (vars.liquidationThreshold != 0 && userConfig.isUsingAsCollateral(vars.i)) {
         vars.compoundedLiquidityBalance = IERC20(currentReserve.wvTokenAddress).balanceOf(user);

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "npx hardhat compile",
-    "test": "npx hardhat test"
+    "compile": "hardhat compile",
+    "test": "npm run compile && hardhat test"
   },
   "keywords": [],
   "author": "Kei Nakano",

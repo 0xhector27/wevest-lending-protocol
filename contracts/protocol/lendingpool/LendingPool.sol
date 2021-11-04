@@ -266,7 +266,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       collateralAsset,
       withdrawAmount
     );
-    console.log("swappedAmount %s", swappedAmount);
     console.log("redeemAmount %s", amount);
     if (swappedAmount >= amount) { // price up
       IYieldFarmingPool(yfpool).transferUnderlying(

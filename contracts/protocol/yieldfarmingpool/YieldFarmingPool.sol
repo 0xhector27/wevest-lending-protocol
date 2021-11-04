@@ -11,7 +11,6 @@ import {IWvToken} from '../../interfaces/IWvToken.sol';
 import {ITokenSwap} from '../../interfaces/ITokenSwap.sol';
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPriceOracleGetter} from '../../interfaces/IPriceOracleGetter.sol';
-import "hardhat/console.sol";
 
 contract YieldFarmingPool is VersionedInitializable {
 
